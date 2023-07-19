@@ -1,5 +1,7 @@
 package bullscows
 
+import kotlin.random.Random
+
 fun main() {
     try {
         println("Please, enter the secret code's length:")
@@ -8,7 +10,7 @@ fun main() {
         if (digits > 10)
             throw RuntimeException("Error: can't generate a secret number with a length of $digits because there aren't enough unique digits.")
 
-        val secretCode = getPseudoRandomNumber(digits)
+        val secretCode = getRandomNumber(digits)
         val grader = Grader(secretCode)
 
         println("Okay, let's start a game!")
@@ -33,16 +35,12 @@ fun main() {
     }
 }
 
-private fun getPseudoRandomNumber(digits: Int): String {
-    while (true) {
-        val pseudoRandomNumber = System.nanoTime().toString().take(digits)
-        if (hasUniqueDigits(pseudoRandomNumber)) return pseudoRandomNumber
+private fun getRandomNumber(digits: Int): String {
+    val builder = StringBuilder(Random.nextInt(1, 10))
+    while (builder.length < digits) {
+        val nextDigit = Random.nextInt(10).toString().first()
+        if (builder.contains(nextDigit)) continue
+        builder.append(nextDigit)
     }
-}
-
-private fun hasUniqueDigits(number: String): Boolean {
-    for (char in number) {
-        if (number.count { it == char } > 1) return false
-    }
-    return true
+    return builder.toString()
 }
